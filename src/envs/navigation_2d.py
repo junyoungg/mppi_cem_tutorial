@@ -11,11 +11,11 @@ import torch
 import numpy as np
 import os
 
-
 from moviepy.video.io.ImageSequenceClip import ImageSequenceClip
 
 from envs.obstacle_map_2d import ObstacleMap, generate_random_obstacles
 
+from IPython import display
 
 @torch.jit.script
 def angle_normalize(x):
@@ -192,16 +192,18 @@ class Navigation2DEnv:
 
         if mode == "human":
             # online rendering
-            plt.pause(0.001)
-            plt.cla()
+            display.clear_output(wait=True)
+            display.display(self._fig)
+            self._ax.cla()
         elif mode == "rgb_array":
             # offline rendering for video
             # TODO: high resolution rendering
             self._fig.canvas.draw()
-            data = np.frombuffer(self._fig.canvas.tostring_rgb(), dtype=np.uint8)
-            data = data.reshape(self._fig.canvas.get_width_height()[::-1] + (3,))
-            plt.cla()
-            self._rendered_frames.append(data)
+            buf = self._fig.canvas.buffer_rgba()
+            data_rgba = np.asarray(buf)
+            data_rgb = data_rgba[..., :3]
+            self._ax.cla()
+            self._rendered_frames.append(data_rgb.copy())
 
     def close(self, path: str = None) -> None:
         if path is None:
@@ -216,6 +218,7 @@ class Navigation2DEnv:
             clip = ImageSequenceClip(self._rendered_frames, fps=10)
             # clip.write_videofile(path, fps=10)
             clip.write_gif(path, fps=10)
+        plt.close(self._fig)
 
     def dynamics(
         self, state: torch.Tensor, action: torch.Tensor, delta_t: float = 0.1

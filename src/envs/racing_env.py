@@ -18,7 +18,7 @@ from envs.obstacle_map_2d import ObstacleMap, generate_random_obstacles
 from envs.lane_map_2d import LaneMap
 from envs.circuit_generator.path_generate import make_side_lane, make_csv_paths
 
-
+from IPython import display
 
 @torch.jit.script
 def angle_normalize(x):
@@ -47,7 +47,7 @@ class RacingEnv:
         # generate reference path
         self.dl = 0.1
         self.line_width = 6.5
-        racing_center_path, _, _ = make_csv_paths("src/envs/circuit_generator/circuit.csv")
+        racing_center_path, _, _ = make_csv_paths("/content/mppi_cem_tutorial/src/envs/circuit_generator/circuit.csv")
         self.right_lane, self.left_lane = make_side_lane(racing_center_path, lane_width=self.line_width)
         # numpy array to tensor
         self.racing_center_path = torch.tensor(racing_center_path, device=self._device, dtype=self._dtype)
@@ -291,16 +291,18 @@ class RacingEnv:
 
         if mode == "human":
             # online rendering
-            plt.pause(0.0001)
-            plt.cla()
+            display.clear_output(wait=True)
+            display.display(self._fig)
+            self._ax.cla()
         elif mode == "rgb_array":
             # offline rendering for video
             # TODO: high resolution rendering
             self._fig.canvas.draw()
-            data = np.frombuffer(self._fig.canvas.tostring_rgb(), dtype=np.uint8)
-            data = data.reshape(self._fig.canvas.get_width_height()[::-1] + (3,))
-            plt.cla()
-            self._rendered_frames.append(data)
+            buf = self._fig.canvas.buffer_rgba()
+            data_rgba = np.asarray(buf)
+            data_rgb = data_rgba[..., :3]
+            self._ax.cla()
+            self._rendered_frames.append(data_rgb.copy())
 
     def close(self, path: str = None) -> None:
         if path is None:
@@ -315,6 +317,7 @@ class RacingEnv:
             clip = ImageSequenceClip(self._rendered_frames, fps=10)
             # clip.write_videofile(path, fps=10)
             clip.write_gif(path, fps=10)
+        plt.close(self._fig)
 
     def dynamics(
         self, state: torch.Tensor, action: torch.Tensor, delta_t: float = 0.1
