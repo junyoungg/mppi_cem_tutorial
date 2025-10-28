@@ -152,6 +152,16 @@ class RacingEnv:
 
         return self._robot_state, is_goal_reached
 
+    def plot(self) -> None:
+        plt.plot(self.racing_center_path[:, 0], self.racing_center_path[:, 1])
+        plt.plot(self.right_lane[:, 0], self.right_lane[:, 1])
+        plt.plot(self.left_lane[:, 0], self.left_lane[:, 1])
+        plt.title("track")
+        plt.xlabel("x [m]")
+        plt.ylabel("y [m]")
+        plt.axis("equal")
+        plt.show()
+        
     def render(
         self,
         action: torch.Tensor = None,
