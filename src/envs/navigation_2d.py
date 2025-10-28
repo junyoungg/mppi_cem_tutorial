@@ -118,6 +118,30 @@ class Navigation2DEnv:
 
         return self._robot_state, is_goal_reached
 
+    def plot(self) -> None:
+        """plot the environment using matplotlib"""
+        self._ax.set_xlabel("x [m]")
+        self._ax.set_ylabel("y [m]")
+
+        # obstacle map
+        self._obstacle_map.render(self._ax, zorder=10)
+
+        # start and goal
+        self._ax.scatter(
+            self._start_pos[0].item(),
+            self._start_pos[1].item(),
+            marker="o",
+            color="red",
+            zorder=10,
+        )
+        self._ax.scatter(
+            self._goal_pos[0].item(),
+            self._goal_pos[1].item(),
+            marker="o",
+            color="orange",
+            zorder=10,
+        )
+        
     def render(
         self,
         predicted_trajectory: torch.Tensor = None,
