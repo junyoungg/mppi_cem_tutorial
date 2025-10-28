@@ -153,14 +153,33 @@ class RacingEnv:
         return self._robot_state, is_goal_reached
 
     def plot(self) -> None:
-        plt.plot(self.racing_center_path[:, 0], self.racing_center_path[:, 1])
-        plt.plot(self.right_lane[:, 0], self.right_lane[:, 1])
-        plt.plot(self.left_lane[:, 0], self.left_lane[:, 1])
-        plt.title("track")
-        plt.xlabel("x [m]")
-        plt.ylabel("y [m]")
-        plt.axis("equal")
-        plt.show()
+        """
+        Plot environment.
+        """
+        self._obstacle_map.render(self._ax, zorder=10)
+
+        # track
+        self._ax.plot(
+            self.racing_center_path[:, 0].cpu().numpy(),
+            self.racing_center_path[:, 1].cpu().numpy(),
+            color="gray",
+            linestyle="--",
+            zorder=5,
+        )
+        self._ax.plot(
+            self.right_lane[:, 0],
+            self.right_lane[:, 1],
+            color="green",
+            linestyle="--",
+            zorder=5,
+        )
+        self._ax.plot(
+            self.left_lane[:, 0],
+            self.left_lane[:, 1],
+            color="green",
+            linestyle="--",
+            zorder=5,
+        )
         
     def render(
         self,
