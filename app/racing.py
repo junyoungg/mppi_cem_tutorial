@@ -5,7 +5,7 @@ from typing import Tuple
 import time
 
 # import gymnasium
-import fire
+# import fire
 import tqdm
 
 from controller.mppi import MPPI
@@ -229,5 +229,5 @@ def main(save_mode: bool = False):
     env.close()  # close window and save video if save_mode is True
 
 
-if __name__ == "__main__":
-    fire.Fire(main)
+# if __name__ == "__main__":
+#     fire.Fire(main)
