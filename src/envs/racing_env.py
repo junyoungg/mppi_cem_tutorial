@@ -153,6 +153,11 @@ class RacingEnv:
         return self._robot_state, is_goal_reached
 
     def plot(self) -> None:
+        self._fig = plt.figure(layout="tight")
+        self._ax = self._fig.add_subplot()
+        self._ax.set_xlim(self._obstacle_map.x_lim)
+        self._ax.set_ylim(self._obstacle_map.y_lim)
+        self._ax.set_aspect("equal")
         """
         Plot environment.
         """
