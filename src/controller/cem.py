@@ -26,7 +26,7 @@ class CEM(nn.Module):
         auto_lambda: bool = False,
         iters: int = 3,
         elite_ratio: float = 0.1,
-        min_std: float = 1e-3, # 수치적 안정화용 표준편차 하한
+        min_std: float = 1e-3, # for numerical stability
         exploration: float = 0.0,
         use_sg_filter: bool = False,
         sg_window_size: int = 5,
