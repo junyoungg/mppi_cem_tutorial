@@ -312,7 +312,7 @@ class CEM(nn.Module):
             # optimal_action_seq = best_actions
             pass
         
-        optimal_state_seq = self._states_prediction(state, optimal_action_seq.unsqueeze(0)).squeeze(0)
+        optimal_state_seq = self._states_prediction(state, optimal_action_seq.repeat(1, 1, 1))
 
         # # find optimal control by weighted average
         # optimal_action_seq = torch.sum(
