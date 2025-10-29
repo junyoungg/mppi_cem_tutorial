@@ -319,6 +319,7 @@ class Navigation2DEnv:
         Returns:
             torch.Tensor: shape (batch_size,)
         """
+        print('state shape:', state.shape)
         pos_batch = state[:, :, :2]
         is_collisions = self._obstacle_map.compute_cost(pos_batch).squeeze(1)
         return is_collisions
