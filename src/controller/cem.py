@@ -95,6 +95,7 @@ class CEM(nn.Module):
         self._sg_window_size = sg_window_size
         self._sg_poly_order = sg_poly_order
         
+        self._init_std_per_dim = sigmas.clone().detach().to(self._device, self._dtype)
         self._iters = iters
         self._elite_ratio = elite_ratio
         self._elite_num = max(1, int(self._num_samples * self._elite_ratio))
@@ -201,7 +202,7 @@ class CEM(nn.Module):
 
 
         mean = self._previous_action_seq.clone().detach() # (horizon, dim_control)
-        std = self._init_std_poer_dim.view(1, self._dim_control).repeat(self._horizon, 1) # (horizon, dim_control)
+        std = self._init_std_per_dim.view(1, self._dim_control).repeat(self._horizon, 1) # (horizon, dim_control)
         
         best_actions = None
         best_cost = torch.tensor(float('inf'), device=self._device, dtype=self._dtype)
