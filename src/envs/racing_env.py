@@ -145,7 +145,7 @@ class RacingEnv:
         ).squeeze(0)
 
         # goal check
-        goal_threshold = 1.0
+        goal_threshold = 5.0
         is_goal_reached = (
             torch.norm(self._robot_state[:2] - self._goal_pos) < goal_threshold
         )
