@@ -307,9 +307,9 @@ class CEM(nn.Module):
         # calculate weights
         self._weights = torch.softmax(-last_total_cost / self._lambda, dim=0)
                         
-        optimal_action_seq = mean # (horizon, dim_control)
+        # optimal_action_seq = mean # (horizon, dim_control)
         if best_actions is not None:
-            # optimal_action_seq = best_actions
+            optimal_action_seq = best_actions
             pass
         
         optimal_state_seq = self._states_prediction(state, optimal_action_seq.repeat(1, 1, 1))
