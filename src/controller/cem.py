@@ -208,10 +208,11 @@ class CEM(nn.Module):
 
         mean_action_seq = self._previous_action_seq.clone().detach()
 
-        for _ in range(self._iters):
+        for iter in range(self._iters):
             eps = torch.randn(
                 (self._num_samples, self._horizon, self._dim_control), device = self._device, dtype=self._dtype
             )
+            samples = mean.unsqueeze(0) + eps * std.unsqueeze(0)
             samples = torch.clamp(samples, self._u_min, self._u_max)
             
             # # random sampling with reparametrization trick
@@ -295,63 +296,70 @@ class CEM(nn.Module):
             
             new_mean = elites.mean(dim=0)  # (horizon, dim_control)
             new_std = elites.std(dim=0, unbiased=False)  # (horizon, dim_control)
-            new_std = torch.clamp(new_std, min=self._min_std)            
+            new_std = torch.clamp(new_std, min=self._min_std)
+            
+            mean, std = new_mean, new_std       
 
-            # # calculate weights
-            # self._weights = torch.softmax(-costs / self._lambda, dim=0)
-
+            if iter == self._iters - 1:
+                last_total_cost = total_cost.clone()
+        
+        # calculate weights
+        self._weights = torch.softmax(-last_total_cost / self._lambda, dim=0)
+                        
         optimal_action_seq = mean
         if best_actions is not None:
             # optimal_action_seq = best_actions
             pass
+        
+        optimal_state_seq = self._states_prediction(state, optimal_action_seq.unsqueeze(0)).squeeze(0)
 
-        # find optimal control by weighted average
-        optimal_action_seq = torch.sum(
-            self._weights.view(self._num_samples, 1, 1) * self._perturbed_action_seqs,
-            dim=0,
-        )
+        # # find optimal control by weighted average
+        # optimal_action_seq = torch.sum(
+        #     self._weights.view(self._num_samples, 1, 1) * self._perturbed_action_seqs,
+        #     dim=0,
+        # )
 
-        mean_action_seq = optimal_action_seq
+        # mean_action_seq = optimal_action_seq
 
-        # auto-tune temperature parameter
-        # Refer E step of MPO algorithm:
-        # https://arxiv.org/pdf/1806.06920
-        if self._auto_lambda:
-            for _ in range(1):
-                self.optimizer.zero_grad()
-                tempature = torch.nn.functional.softplus(self.log_tempature)
-                cost_logsumexp = torch.logsumexp(-costs / tempature, dim=0)
-                epsilon = 0.1  # tolerance hyperparameter for KL divergence
-                loss = tempature * (epsilon + torch.mean(cost_logsumexp))
-                loss.backward()
-                self.optimizer.step()
-            self._lambda = torch.exp(self.log_tempature).item()
+        # # auto-tune temperature parameter
+        # # Refer E step of MPO algorithm:
+        # # https://arxiv.org/pdf/1806.06920
+        # if self._auto_lambda:
+        #     for _ in range(1):
+        #         self.optimizer.zero_grad()
+        #         tempature = torch.nn.functional.softplus(self.log_tempature)
+        #         cost_logsumexp = torch.logsumexp(-costs / tempature, dim=0)
+        #         epsilon = 0.1  # tolerance hyperparameter for KL divergence
+        #         loss = tempature * (epsilon + torch.mean(cost_logsumexp))
+        #         loss.backward()
+        #         self.optimizer.step()
+        #     self._lambda = torch.exp(self.log_tempature).item()
 
-        if self._use_sg_filter:
-            # apply savitzky-golay filter to N-1 previous action history + N optimal action seq
-            prolonged_action_seq = torch.cat(
-                [
-                    self._actions_history_for_sg,
-                    optimal_action_seq,
-                ],
-                dim=0,
-            )
+        # if self._use_sg_filter:
+        #     # apply savitzky-golay filter to N-1 previous action history + N optimal action seq
+        #     prolonged_action_seq = torch.cat(
+        #         [
+        #             self._actions_history_for_sg,
+        #             optimal_action_seq,
+        #         ],
+        #         dim=0,
+        #     )
 
-            # appply sg filter for each control dimension
-            filtered_action_seq = torch.zeros_like(
-                prolonged_action_seq, device=self._device, dtype=self._dtype
-            )
-            for i in range(self._dim_control):
-                filtered_action_seq[:, i] = self._apply_savitzky_golay(
-                    prolonged_action_seq[:, i], self._coeffs
-                )
+        #     # appply sg filter for each control dimension
+        #     filtered_action_seq = torch.zeros_like(
+        #         prolonged_action_seq, device=self._device, dtype=self._dtype
+        #     )
+        #     for i in range(self._dim_control):
+        #         filtered_action_seq[:, i] = self._apply_savitzky_golay(
+        #             prolonged_action_seq[:, i], self._coeffs
+        #         )
 
-            # use only N step optimal action seq
-            optimal_action_seq = filtered_action_seq[-self._horizon :]
+        #     # use only N step optimal action seq
+        #     optimal_action_seq = filtered_action_seq[-self._horizon :]
 
-        # predivtive state seq
-        expanded_optimal_action_seq = optimal_action_seq.repeat(1, 1, 1)
-        optimal_state_seq = self._states_prediction(state, expanded_optimal_action_seq)
+        # # predivtive state seq
+        # expanded_optimal_action_seq = optimal_action_seq.repeat(1, 1, 1)
+        # optimal_state_seq = self._states_prediction(state, expanded_optimal_action_seq)
 
         # update previous actions
         self._previous_action_seq = optimal_action_seq
