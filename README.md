@@ -1,3 +1,6 @@
+## Reference
+This repository is based on [mppi_playground](https://github.com/kohonda/mppi_playground) by kohonda. Some parts of the code were modified for educational purposes.
+
 # MPPI Playground
 This repository contains an implementation of [Model Predictive Path Integral Control (MPPI)](https://arxiv.org/abs/1707.02342) with PyTorch to accelerate computations on the GPU.
 
