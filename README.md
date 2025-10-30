@@ -95,30 +95,3 @@ python3 app/racing.py
 </p>
 
 [circuit course information (Japan Automotive AI Challenge 2024)](https://github.com/AutomotiveAIChallenge/aichallenge-2024)
-
-### Pendulum
-```bash
-python3 app/pendulum.py
-```
-<p align="center">
-  <img src="./media/pendulum.gif" width="500" alt="pendulum">
-</p>
-
-### Cartpole
-```bash
-python3 app/cartpole.py
-```
-<p align="center">
-  <img src="./media/cartpole.gif" width="500" alt="cartpole">
-</p>
-
-### Mountain car
-```bash
-python3 app/mountaincar.py
-```
-<p align="center">
-  <img src="./media/mountaincar.gif" width="500" alt="mountaincar">
-</p>
-
-## Reference
-- [pytorch_mppi](https://github.com/UM-ARM-Lab/pytorch_mppi)
