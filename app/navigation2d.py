@@ -64,7 +64,7 @@ def main(solver, traj, save_mode: bool = True):
         is_collisions = env.collision_check(state=state_seq)
 
         try:
-            top_samples, top_weights = solver.get_top_samples(num_samples=50)
+            top_samples, top_weights = solver.get_top_samples(num_samples=300)
         except:
             top_samples, top_weights = solver.get_top_samples(num_samples=solver._num_samples)
 
