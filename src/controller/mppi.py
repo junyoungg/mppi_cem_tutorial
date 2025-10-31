@@ -18,17 +18,18 @@ class MPPI(nn.Module):
 
     def __init__(
         self,
+        env,
         horizon: int,
         num_samples: int,
-        dim_state: int,
-        dim_control: int,
-        dynamics: Callable[[torch.Tensor, torch.Tensor], torch.Tensor],
-        cost_func: Callable[[torch.Tensor, torch.Tensor, Dict], torch.Tensor],
-        u_min: torch.Tensor,
-        u_max: torch.Tensor,
+        # dim_state: int,
+        # dim_control: int,
+        # dynamics: Callable[[torch.Tensor, torch.Tensor], torch.Tensor],
+        # cost_func: Callable[[torch.Tensor, torch.Tensor, Dict], torch.Tensor],
+        # u_min: torch.Tensor,
+        # u_max: torch.Tensor,
         sigmas: torch.Tensor,
         lambda_: float,
-        auto_lambda: bool = False,
+        # auto_lambda: bool = False,
         exploration: float = 0.0,
         use_sg_filter: bool = False,
         sg_window_size: int = 5,
@@ -64,9 +65,11 @@ class MPPI(nn.Module):
         # torch seed
         torch.manual_seed(seed)
 
+        dim_state = 3
+        dim_control = 2
         # check dimensions
-        assert u_min.shape == (dim_control,)
-        assert u_max.shape == (dim_control,)
+        # assert u_min.shape == (dim_control,)
+        # assert u_max.shape == (dim_control,)
         assert sigmas.shape == (dim_control,)
         # assert num_samples % batch_size == 0 and num_samples >= batch_size
 
@@ -83,10 +86,18 @@ class MPPI(nn.Module):
         self._num_samples = num_samples
         self._dim_state = dim_state
         self._dim_control = dim_control
-        self._dynamics = dynamics
-        self._cost_func = cost_func
-        self._u_min = u_min.clone().detach().to(self._device, self._dtype)
-        self._u_max = u_max.clone().detach().to(self._device, self._dtype)
+        
+        # self._dynamics = dynamics
+        self._dynamics = env.dynamics
+        
+        # self._cost_func = cost_func
+        self._cost_func = env.cost_function
+        
+        # self._u_min = u_min.clone().detach().to(self._device, self._dtype)
+        # self._u_max = u_max.clone().detach().to(self._device, self._dtype)
+        self._u_min = env.u_min.clone().detach().to(self._device, self._dtype)
+        self._u_max = env.u_max.clone().detach().to(self._device, self._dtype)
+        
         self._sigmas = sigmas.clone().detach().to(self._device, self._dtype)
         self._lambda = lambda_
         self._exploration = exploration
