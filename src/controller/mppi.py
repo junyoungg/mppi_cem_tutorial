@@ -165,14 +165,14 @@ class MPPI(nn.Module):
         )
 
         # auto lambda tuning
-        self._auto_lambda = auto_lambda
-        if auto_lambda:
-            self.log_tempature = torch.nn.Parameter(
-                torch.log(
-                    torch.tensor([self._lambda], device=self._device, dtype=self._dtype)
-                )
-            )
-            self.optimizer = torch.optim.Adam([self.log_tempature], lr=1e-2)
+        self._auto_lambda = False
+        # if auto_lambda:
+        #     self.log_tempature = torch.nn.Parameter(
+        #         torch.log(
+        #             torch.tensor([self._lambda], device=self._device, dtype=self._dtype)
+        #         )
+        #     )
+        #     self.optimizer = torch.optim.Adam([self.log_tempature], lr=1e-2)
 
     def reset(self):
         """
