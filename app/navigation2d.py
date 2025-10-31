@@ -94,6 +94,8 @@ def main(traj, save_mode: bool = True):
     average_time = total_time / step_count
     print("average solve time: {:.3f} ms".format(average_time * 1000))
     env.close()  # close window and save video if save_mode is True
+    
+    return np.stack(traj, axis=0)
 
 
 if __name__ == "__main__":
