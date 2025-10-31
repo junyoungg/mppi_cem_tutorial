@@ -24,7 +24,7 @@ def angle_normalize(x):
 
 class Navigation2DEnv:
     def __init__(
-        self, device=torch.device("cuda"), dtype=torch.float32, seed: int = 42
+        self, v_min=0.0, v_max=2.0, omega_min=-1.0, omega_max=1.0, device=torch.device("cuda"), dtype=torch.float32, seed: int = 42
     ) -> None:
         # device and dtype
         if torch.cuda.is_available() and device == torch.device("cuda"):
@@ -69,8 +69,8 @@ class Navigation2DEnv:
         )
 
         # u: [v, omega] (m/s, rad/s)
-        self.u_min = torch.tensor([0.0, -1.0], device=self._device, dtype=self._dtype)
-        self.u_max = torch.tensor([2.0, 1.0], device=self._device, dtype=self._dtype)
+        self.u_min = torch.tensor([v_min, omega_min], device=self._device, dtype=self._dtype)
+        self.u_max = torch.tensor([v_max, omega_max], device=self._device, dtype=self._dtype)
 
     def reset(self) -> torch.Tensor:
         """

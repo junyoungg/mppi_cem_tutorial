@@ -11,7 +11,7 @@ from controller.cem import CEM
 from envs.navigation_2d import Navigation2DEnv
 
 
-def main(traj, save_mode: bool = True):
+def main(solver, traj, save_mode: bool = True):
     env = Navigation2DEnv()
 
     # solver
