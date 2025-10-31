@@ -65,8 +65,20 @@ class MPPI(nn.Module):
         # torch seed
         torch.manual_seed(seed)
 
-        dim_state = 3
-        dim_control = 2
+        # self._cost_func = cost_func
+        # self._cost_func = env.cost_function
+        try:
+            self._cost_func = env.cost_function
+        except:
+            self._cost_func = None
+        
+        if self._cost_func is not None:    
+            dim_state = 3
+            dim_control = 2
+        else:
+            dim_state = 4
+            dim_control = 2
+            
         # check dimensions
         # assert u_min.shape == (dim_control,)
         # assert u_max.shape == (dim_control,)
@@ -89,13 +101,6 @@ class MPPI(nn.Module):
         
         # self._dynamics = dynamics
         self._dynamics = env.dynamics
-        
-        # self._cost_func = cost_func
-        # self._cost_func = env.cost_function
-        try:
-            self._cost_func = env.cost_function
-        except:
-            self._cost_func = None
         
         # self._u_min = u_min.clone().detach().to(self._device, self._dtype)
         # self._u_max = u_max.clone().detach().to(self._device, self._dtype)
