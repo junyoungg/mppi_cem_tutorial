@@ -11,7 +11,7 @@ from controller.cem import CEM
 from envs.navigation_2d import Navigation2DEnv
 
 
-def main(save_mode: bool = True):
+def main(traj, save_mode: bool = True):
     env = Navigation2DEnv()
 
     # solver
@@ -46,6 +46,8 @@ def main(save_mode: bool = True):
     )
 
     state = env.reset()
+    traj.append(state[:2].cpu().numpy())
+    
     max_steps = 500
     total_time = 0.0
     step_count = 0
@@ -57,10 +59,14 @@ def main(save_mode: bool = True):
         step_count += 1
 
         state, is_goal_reached = env.step(action_seq[0, :])
+        traj.append(state[:2].cpu().numpy())
 
         is_collisions = env.collision_check(state=state_seq)
 
-        top_samples, top_weights = solver.get_top_samples(num_samples=300)
+        try:
+            top_samples, top_weights = solver.get_top_samples(num_samples=50)
+        except:
+            top_samples, top_weights = solver.get_top_samples(num_samples=solver._num_samples)
 
         if save_mode:
             env.render(
