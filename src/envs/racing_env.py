@@ -17,10 +17,6 @@ from envs.obstacle_map_2d import ObstacleMap, generate_random_obstacles
 from envs.lane_map_2d import LaneMap
 from envs.circuit_generator.path_generate import make_side_lane, make_csv_paths
 
-import sys
-sys.path.append("/content/mppi_cem_tutorial/app")
-from racing import racing_controller
-
 from IPython import display
 
 @torch.jit.script
@@ -106,8 +102,6 @@ class RacingEnv:
             )
         )
         self._robot_state[3] = 0.0
-        
-        self.cost_function = 
 
     def reset(self) -> torch.Tensor:
         """
