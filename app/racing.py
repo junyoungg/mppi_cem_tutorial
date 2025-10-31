@@ -6,9 +6,10 @@ import time
 
 # import gymnasium
 # import fire
-import tqdm
+from tqdm.notebook import tqdm
 
 from controller.mppi import MPPI
+from controller.cem import CEM
 from envs.racing_env import RacingEnv
 from envs.obstacle_map_2d import ObstacleMap
 from envs.lane_map_2d import LaneMap

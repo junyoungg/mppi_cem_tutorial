@@ -11,8 +11,8 @@ from controller.cem import CEM
 from envs.navigation_2d import Navigation2DEnv
 
 
-def main(solver, traj, save_mode: bool = True):
-    env = Navigation2DEnv()
+def main(env, solver, traj, save_mode: bool = True):
+    # env = Navigation2DEnv()
 
     # solver
     # solver = MPPI(
