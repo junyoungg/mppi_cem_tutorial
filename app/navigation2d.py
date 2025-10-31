@@ -1,22 +1,36 @@
 import torch
-
+import numpy as np
 import time
 
 # import gymnasium
-import fire
-import tqdm
+# import fire
+from tqdm.notebook import tqdm
 
 from controller.mppi import MPPI
+from controller.cem import CEM
 from envs.navigation_2d import Navigation2DEnv
 
 
-def main(save_mode: bool = False):
+def main(save_mode: bool = True):
     env = Navigation2DEnv()
 
     # solver
-    solver = MPPI(
+    # solver = MPPI(
+    #     horizon=30,
+    #     num_samples=3000,
+    #     dim_state=3,
+    #     dim_control=2,
+    #     dynamics=env.dynamics,
+    #     cost_func=env.cost_function,
+    #     u_min=env.u_min,
+    #     u_max=env.u_max,
+    #     sigmas=torch.tensor([0.5, 0.5]),
+    #     lambda_=1.0,
+    #     auto_lambda=False,
+    # )
+    solver = CEM(
         horizon=30,
-        num_samples=3000,
+        num_samples=300,
         dim_state=3,
         dim_control=2,
         dynamics=env.dynamics,
@@ -26,6 +40,9 @@ def main(save_mode: bool = False):
         sigmas=torch.tensor([0.5, 0.5]),
         lambda_=1.0,
         auto_lambda=False,
+        iters=3,
+        elite_ratio=0.1,
+        min_std=1e-3,
     )
 
     state = env.reset()
@@ -54,7 +71,7 @@ def main(save_mode: bool = False):
             )
             # progress bar
             if i == 0:
-                pbar = tqdm.tqdm(total=max_steps, desc="recording video")
+                pbar = tqdm(total=max_steps, desc="recording video")
             pbar.update(1)
 
         else:
@@ -74,4 +91,4 @@ def main(save_mode: bool = False):
 
 
 if __name__ == "__main__":
-    fire.Fire(main)
+    main()
