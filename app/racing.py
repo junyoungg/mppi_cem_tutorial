@@ -15,7 +15,7 @@ from envs.obstacle_map_2d import ObstacleMap
 from envs.lane_map_2d import LaneMap
 
 class racing_controller:
-    def __init__(self, solver, debug=False, device=torch.device("cuda"), dtype=torch.float32) -> None:
+    def __init__(self, env, solver, debug=False, device=torch.device("cuda"), dtype=torch.float32) -> None:
         
         self.debug = debug
         self.current_path_index = 0
@@ -39,7 +39,7 @@ class racing_controller:
             self.solver._cost_func = self.cost_function
 
         # config
-        # self.env = env
+        self.env = env
 
         # cost weights
         self.Qc = 2.0  # contouring error cost
@@ -187,7 +187,7 @@ def main(env, solver, traj, save_mode: bool = True):
     # env = RacingEnv()
 
     # controller
-    controller = racing_controller(solver, debug=False)
+    controller = racing_controller(env, solver, debug=False)
     controller.set_cost_map(env._obstacle_map, env._lane_map)
 
     state = env.reset()
