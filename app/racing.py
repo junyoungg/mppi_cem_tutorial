@@ -194,10 +194,15 @@ def main(env, solver, traj, save_mode: bool = True):
     traj.append(state[:2].cpu().numpy())
     
     max_steps = 500
-    average_time = 0
+    total_time = 0.0
+    step_count = 0
     for i in range(max_steps):
+        start = time.time()
         action_seq, state_seq = controller.update(state, env.racing_center_path)
-
+        end = time.time()
+        total_time += end - start
+        step_count += 1
+        
         state, is_goal_reached = env.step(action_seq[0, :])
         traj.append(state[:2].cpu().numpy())
 
@@ -235,6 +240,7 @@ def main(env, solver, traj, save_mode: bool = True):
             print("Goal Reached!")
             break
 
+    average_time = total_time / step_count
     print("average solve time: {}".format(average_time * 1000), " [ms]")
     env.close()  # close window and save video if save_mode is True
     
