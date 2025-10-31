@@ -11,7 +11,7 @@ from tqdm.notebook import tqdm
 # from envs.navigation_2d import Navigation2DEnv
 
 
-def main(env, solver, traj, save_mode: bool = True):
+def main(env, solver, traj=[], save_mode: bool = True):
     # env = Navigation2DEnv()
 
     # solver

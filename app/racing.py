@@ -183,7 +183,7 @@ class racing_controller:
         return xref, ind
 
 
-def main(env, solver, traj, save_mode: bool = True):
+def main(env, solver, traj=[], save_mode: bool = True):
     # env = RacingEnv()
 
     # controller
