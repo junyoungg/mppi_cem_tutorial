@@ -219,7 +219,7 @@ def main(env, solver, traj, save_mode: bool = True):
             )
             # progress bar
             if i == 0:
-                pbar = tqdm.tqdm(total=max_steps, desc="recording video")
+                pbar = tqdm(total=max_steps, desc="recording video")
             pbar.update(1)
 
         else:
