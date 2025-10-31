@@ -89,7 +89,7 @@ class RacingEnv:
             [self.racing_center_path[0][0], self.racing_center_path[0][1]], device=self._device, dtype=self._dtype
         )
         self._goal_pos = torch.tensor(
-            [self.racing_center_path[-1][0], self.racing_center_path[-1][1]], device=self._device, dtype=self._dtype
+            [self.racing_center_path[-5][0], self.racing_center_path[-5][1]], device=self._device, dtype=self._dtype
         )
 
         # state initialization
