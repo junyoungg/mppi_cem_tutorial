@@ -95,8 +95,9 @@ def main(traj, save_mode: bool = True):
     print("average solve time: {:.3f} ms".format(average_time * 1000))
     env.close()  # close window and save video if save_mode is True
     
-    return np.stack(traj, axis=0)
+    traj = np.stack(traj, axis=0)
+    return traj
 
 
 if __name__ == "__main__":
-    main()
+    main(traj=[])
