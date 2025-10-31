@@ -183,13 +183,14 @@ class racing_controller:
         return xref, ind
 
 
-def main(env, solver, traj=[], save_mode: bool = True):
+def main(env, solver, save_mode: bool = True):
     # env = RacingEnv()
 
     # controller
     controller = racing_controller(env, solver, debug=False)
     controller.set_cost_map(env._obstacle_map, env._lane_map)
-
+    
+    traj = []
     state = env.reset()
     traj.append(state[:2].cpu().numpy())
     

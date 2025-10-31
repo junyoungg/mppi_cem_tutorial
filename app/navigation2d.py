@@ -11,7 +11,7 @@ from tqdm.notebook import tqdm
 # from envs.navigation_2d import Navigation2DEnv
 
 
-def main(env, solver, traj=[], save_mode: bool = True):
+def main(env, solver, save_mode: bool = True):
     # env = Navigation2DEnv()
 
     # solver
@@ -44,7 +44,7 @@ def main(env, solver, traj=[], save_mode: bool = True):
     #     elite_ratio=0.1,
     #     min_std=1e-3,
     # )
-
+    traj = []
     state = env.reset()
     traj.append(state[:2].cpu().numpy())
     
