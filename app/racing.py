@@ -8,35 +8,36 @@ import time
 # import fire
 from tqdm.notebook import tqdm
 
-from controller.mppi import MPPI
-from controller.cem import CEM
-from envs.racing_env import RacingEnv
+# from controller.mppi import MPPI
+# from controller.cem import CEM
+# from envs.racing_env import RacingEnv
 from envs.obstacle_map_2d import ObstacleMap
 from envs.lane_map_2d import LaneMap
 
 class racing_controller:
-    def __init__(self, env, debug=False, device=torch.device("cuda"), dtype=torch.float32) -> None:
+    def __init__(self, solver, debug=False, device=torch.device("cuda"), dtype=torch.float32) -> None:
         
         self.debug = debug
         self.current_path_index = 0
 
-        # solver
-        self.solver = MPPI(
-            horizon=25,
-            num_samples=4000,
-            dim_state=4,
-            dim_control=2,
-            dynamics=env.dynamics,
-            cost_func=self.cost_function,
-            u_min=env.u_min,
-            u_max=env.u_max,
-            sigmas=torch.tensor([0.5, 0.1]),
-            lambda_=1.0,
-            auto_lambda=False,
-        )
+        # # solver
+        # self.solver = MPPI(
+        #     horizon=25,
+        #     num_samples=4000,
+        #     dim_state=4,
+        #     dim_control=2,
+        #     dynamics=env.dynamics,
+        #     cost_func=self.cost_function,
+        #     u_min=env.u_min,
+        #     u_max=env.u_max,
+        #     sigmas=torch.tensor([0.5, 0.1]),
+        #     lambda_=1.0,
+        #     auto_lambda=False,
+        # )
+        self.solver = solver
 
         # config
-        self.env = env
+        # self.env = env
 
         # cost weights
         self.Qc = 2.0  # contouring error cost
@@ -180,24 +181,30 @@ class racing_controller:
         return xref, ind
 
 
-def main(save_mode: bool = False):
-    env = RacingEnv()
+def main(env, solver, traj, save_mode: bool = True):
+    # env = RacingEnv()
 
     # controller
-    controller = racing_controller(env, debug=True)
+    controller = racing_controller(solver, debug=False)
     controller.set_cost_map(env._obstacle_map, env._lane_map)
 
     state = env.reset()
+    traj.append(state[:2].cpu().numpy())
+    
     max_steps = 500
     average_time = 0
     for i in range(max_steps):
         action_seq, state_seq = controller.update(state, env.racing_center_path)
 
         state, is_goal_reached = env.step(action_seq[0, :])
+        traj.append(state[:2].cpu().numpy())
 
         is_collisions = env.collision_check(state=state_seq)
 
-        top_samples, top_weights = controller.get_top_samples(num_samples=300)
+        try:
+            top_samples, top_weights = controller.get_top_samples(num_samples=300)
+        except:
+            top_samples, top_weights = controller.get_top_samples(num_samples=solver._num_samples)
 
         if save_mode:
             env.render(
@@ -228,6 +235,9 @@ def main(save_mode: bool = False):
 
     print("average solve time: {}".format(average_time * 1000), " [ms]")
     env.close()  # close window and save video if save_mode is True
+    
+    traj = np.stack(traj, axis=0)
+    return traj
 
 
 # if __name__ == "__main__":

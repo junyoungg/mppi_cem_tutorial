@@ -6,9 +6,9 @@ import time
 # import fire
 from tqdm.notebook import tqdm
 
-from controller.mppi import MPPI
-from controller.cem import CEM
-from envs.navigation_2d import Navigation2DEnv
+# from controller.mppi import MPPI
+# from controller.cem import CEM
+# from envs.navigation_2d import Navigation2DEnv
 
 
 def main(env, solver, traj, save_mode: bool = True):
