@@ -19,7 +19,6 @@ class CEM(nn.Module):
         # dim_state: int,
         # dim_control: int,
         # dynamics: Callable[[torch.Tensor, torch.Tensor], torch.Tensor],
-        # cost_func: Callable[[torch.Tensor, torch.Tensor, Dict], torch.Tensor],
         # u_min: torch.Tensor,
         # u_max: torch.Tensor,
         sigmas: torch.Tensor,
@@ -27,6 +26,7 @@ class CEM(nn.Module):
         # auto_lambda: bool = False,
         iters: int = 3,
         elite_ratio: float = 0.1,
+        # cost_func: Callable[[torch.Tensor, torch.Tensor, Dict], torch.Tensor] = None,
         min_std: float = 1e-3, # for numerical stability
         exploration: float = 0.0,
         use_sg_filter: bool = False,
@@ -93,7 +93,11 @@ class CEM(nn.Module):
         self._dynamics = env.dynamics
         
         # self._cost_func = cost_func
-        self._cost_func = env.cost_function
+        # self._cost_func = env.cost_function
+        try:
+            self._cost_func = env.cost_function
+        except:
+            self._cost_func = None
         
         # self._u_min = u_min.clone().detach().to(self._device, self._dtype)
         # self._u_max = u_max.clone().detach().to(self._device, self._dtype)

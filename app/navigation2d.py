@@ -99,5 +99,5 @@ def main(env, solver, traj, save_mode: bool = True):
     return traj
 
 
-if __name__ == "__main__":
-    main(traj=[])
+# if __name__ == "__main__":
+#     main(traj=[])

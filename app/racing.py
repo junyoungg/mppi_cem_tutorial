@@ -35,6 +35,8 @@ class racing_controller:
         #     auto_lambda=False,
         # )
         self.solver = solver
+        if self.solver._cost_func is None:
+            self.solver._cost_func = self.cost_function
 
         # config
         # self.env = env

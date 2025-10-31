@@ -11,12 +11,15 @@ import torch
 import numpy as np
 import os
 
-
 from moviepy.video.io.ImageSequenceClip import ImageSequenceClip
 
 from envs.obstacle_map_2d import ObstacleMap, generate_random_obstacles
 from envs.lane_map_2d import LaneMap
 from envs.circuit_generator.path_generate import make_side_lane, make_csv_paths
+
+import sys
+sys.path.append("/content/mppi_cem_tutorial/app")
+from racing import racing_controller
 
 from IPython import display
 
@@ -27,7 +30,7 @@ def angle_normalize(x):
 
 class RacingEnv:
     def __init__(
-        self, acc_min=-2.0, acc_max=2.0, steer_min=-0.25, steer_max=0.25, device=torch.device("cuda"), dtype=torch.float32, seed: int = 42
+        self, acc_min=-2.0, acc_max=2.0, steer_min=-0.25, steer_max=0.25, device=torch.device("cuda"), dtype=torch.float32, seed: int = 42,
     ) -> None:
         # device and dtype
         if torch.cuda.is_available() and device == torch.device("cuda"):
@@ -103,6 +106,8 @@ class RacingEnv:
             )
         )
         self._robot_state[3] = 0.0
+        
+        self.cost_function = 
 
     def reset(self) -> torch.Tensor:
         """
