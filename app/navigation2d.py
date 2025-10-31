@@ -28,22 +28,22 @@ def main(solver, traj, save_mode: bool = True):
     #     lambda_=1.0,
     #     auto_lambda=False,
     # )
-    solver = CEM(
-        horizon=30,
-        num_samples=300,
-        dim_state=3,
-        dim_control=2,
-        dynamics=env.dynamics,
-        cost_func=env.cost_function,
-        u_min=env.u_min,
-        u_max=env.u_max,
-        sigmas=torch.tensor([0.5, 0.5]),
-        lambda_=1.0,
-        auto_lambda=False,
-        iters=3,
-        elite_ratio=0.1,
-        min_std=1e-3,
-    )
+    # solver = CEM(
+    #     horizon=30,
+    #     num_samples=300,
+    #     dim_state=3,
+    #     dim_control=2,
+    #     dynamics=env.dynamics,
+    #     cost_func=env.cost_function,
+    #     u_min=env.u_min,
+    #     u_max=env.u_max,
+    #     sigmas=torch.tensor([0.5, 0.5]),
+    #     lambda_=1.0,
+    #     auto_lambda=False,
+    #     iters=3,
+    #     elite_ratio=0.1,
+    #     min_std=1e-3,
+    # )
 
     state = env.reset()
     traj.append(state[:2].cpu().numpy())
