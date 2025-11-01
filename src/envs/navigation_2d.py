@@ -240,7 +240,7 @@ class Navigation2DEnv:
 
             if not os.path.exists("video"):
                 os.mkdir("video")
-            path = "video/" + "navigation_2d_" + ".gif"
+            path = "video/" + "navigation_2d" + ".gif"
 
         if len(self._rendered_frames) > 0:
             # save animation

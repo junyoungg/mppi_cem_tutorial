@@ -343,7 +343,7 @@ class RacingEnv:
 
             if not os.path.exists("video"):
                 os.mkdir("video")
-            path = "video/" + "racing_" + ".gif"
+            path = "video/" + "racing" + ".gif"
 
         if len(self._rendered_frames) > 0:
             # save animation
