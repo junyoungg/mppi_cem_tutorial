@@ -26,7 +26,7 @@ def angle_normalize(x):
 
 class RacingEnv:
     def __init__(
-        self, acc_min=-2.0, acc_max=2.0, steer_min=-0.25, steer_max=0.25, device=torch.device("cuda"), dtype=torch.float32, seed: int = 42,
+        self, acc_min=-2.0, acc_max=2.0, steer_min=-0.25, steer_max=0.25, seed: int = 42, device=torch.device("cuda"), dtype=torch.float32,
     ) -> None:
         # device and dtype
         if torch.cuda.is_available() and device == torch.device("cuda"):
