@@ -24,7 +24,7 @@ def angle_normalize(x):
 
 class Navigation2DEnv:
     def __init__(
-        self, v_min=0.0, v_max=2.0, omega_min=-1.0, omega_max=1.0, device=torch.device("cuda"), dtype=torch.float32, seed: int = 42
+        self, v_min=0.0, v_max=2.0, omega_min=-1.0, omega_max=1.0, seed: int = 42, device=torch.device("cuda"), dtype=torch.float32
     ) -> None:
         # device and dtype
         if torch.cuda.is_available() and device == torch.device("cuda"):
@@ -240,7 +240,7 @@ class Navigation2DEnv:
 
             if not os.path.exists("video"):
                 os.mkdir("video")
-            path = "video/" + "navigation_2d_" + str(self._seed) + ".gif"
+            path = "video/" + "navigation_2d_" + ".gif"
 
         if len(self._rendered_frames) > 0:
             # save animation
