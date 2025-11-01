@@ -11,12 +11,11 @@ from tqdm.notebook import tqdm
 # from envs.navigation_2d import Navigation2DEnv
 
 
-def main(env, solver, save_mode: bool = True):
+def main(env, solver, max_steps=300, save_mode: bool = True):
     traj = []
     state = env.reset()
     traj.append(state[:2].cpu().numpy())
     
-    max_steps = 500
     total_time = 0.0
     step_count = 0
     for i in range(max_steps):

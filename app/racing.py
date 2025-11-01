@@ -20,20 +20,6 @@ class racing_controller:
         self.debug = debug
         self.current_path_index = 0
 
-        # # solver
-        # self.solver = MPPI(
-        #     horizon=25,
-        #     num_samples=4000,
-        #     dim_state=4,
-        #     dim_control=2,
-        #     dynamics=env.dynamics,
-        #     cost_func=self.cost_function,
-        #     u_min=env.u_min,
-        #     u_max=env.u_max,
-        #     sigmas=torch.tensor([0.5, 0.1]),
-        #     lambda_=1.0,
-        #     auto_lambda=False,
-        # )
         self.solver = solver
         if self.solver._cost_func is None:
             self.solver._cost_func = self.cost_function
@@ -183,7 +169,7 @@ class racing_controller:
         return xref, ind
 
 
-def main(env, solver, save_mode: bool = True):
+def main(env, solver, max_steps=300, save_mode: bool = True):
     # env = RacingEnv()
 
     # controller
@@ -194,7 +180,6 @@ def main(env, solver, save_mode: bool = True):
     state = env.reset()
     traj.append(state[:2].cpu().numpy())
     
-    max_steps = 500
     total_time = 0.0
     step_count = 0
     for i in range(max_steps):
