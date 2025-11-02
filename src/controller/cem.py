@@ -100,11 +100,8 @@ class CEM(nn.Module):
         self._dim_state = dim_state
         self._dim_control = dim_control
         
-        # self._dynamics = dynamics
         self._dynamics = env.dynamics
         
-        # self._u_min = u_min.clone().detach().to(self._device, self._dtype)
-        # self._u_max = u_max.clone().detach().to(self._device, self._dtype)
         self._u_min = env.u_min.clone().detach().to(self._device, self._dtype)
         self._u_max = env.u_max.clone().detach().to(self._device, self._dtype)
         
@@ -328,6 +325,7 @@ class CEM(nn.Module):
         self._weights = torch.softmax(-last_total_cost / self._lambda, dim=0)
                         
         optimal_action_seq = mean # (horizon, dim_control)
+        
         # if best_actions is not None:
         #     optimal_action_seq = best_actions
         #     pass
