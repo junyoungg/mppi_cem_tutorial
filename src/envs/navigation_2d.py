@@ -301,10 +301,7 @@ class Navigation2DEnv:
         goal_cost = torch.norm(state[:, :2] - self._goal_pos, dim=1)
 
         pos_batch = state[:, :2].unsqueeze(1)  # (batch_size, 1, 2)
-
-        obstacle_cost = self._obstacle_map.compute_cost(pos_batch).squeeze(
-            1
-        )  # (batch_size,)
+        obstacle_cost = self._obstacle_map.compute_cost(pos_batch).squeeze(1)  # (batch_size,)
 
         cost = goal_cost + 10000 * obstacle_cost
 

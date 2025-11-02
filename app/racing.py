@@ -102,7 +102,6 @@ class racing_controller:
             -torch.cos(self.reference_path[t, 2]) * (state[:, 1] - self.reference_path[t, 1])
         el = -torch.cos(self.reference_path[t, 2]) * (state[:, 0] - self.reference_path[t, 0]) \
              -torch.sin(self.reference_path[t, 2]) * (state[:, 1] - self.reference_path[t, 1])
-
         path_cost = self.Qc * ec.pow(2) + self.Ql * el.pow(2)
 
         # velocity cost

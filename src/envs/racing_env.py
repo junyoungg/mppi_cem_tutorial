@@ -26,7 +26,7 @@ def angle_normalize(x):
 
 class RacingEnv:
     def __init__(
-        self, acc_min=-2.0, acc_max=2.0, steer_min=-0.25, steer_max=0.25, seed: int = 42, device=torch.device("cuda"), dtype=torch.float32,
+        self, v_max=8.0, acc_min=-2.0, acc_max=2.0, steer_min=-0.25, steer_max=0.25, seed: int = 42, device=torch.device("cuda"), dtype=torch.float32,
     ) -> None:
         # device and dtype
         if torch.cuda.is_available() and device == torch.device("cuda"):
@@ -41,7 +41,7 @@ class RacingEnv:
         
         # model parameters
         self.L = torch.tensor(1, device=self._device, dtype=self._dtype)
-        self.V_MAX = torch.tensor(8.0, device=self._device, dtype=self._dtype)
+        self.V_MAX = torch.tensor(v_max, device=self._device, dtype=self._dtype)
 
         # generate reference path
         self.dl = 0.1
@@ -89,7 +89,7 @@ class RacingEnv:
             [self.racing_center_path[0][0], self.racing_center_path[0][1]], device=self._device, dtype=self._dtype
         )
         self._goal_pos = torch.tensor(
-            [self.racing_center_path[-5][0], self.racing_center_path[-5][1]], device=self._device, dtype=self._dtype
+            [self.racing_center_path[-1][0], self.racing_center_path[-1][1]], device=self._device, dtype=self._dtype
         )
 
         # state initialization
@@ -374,15 +374,10 @@ class RacingEnv:
         steer = torch.clamp(action[:, 1].view(-1, 1), self.u_min[1], self.u_max[1])
         theta = angle_normalize(theta)
 
-        dx = v * torch.cos(theta)
-        dy = v * torch.sin(theta)
-        dv = accel
-        dtheta = v * torch.tan(steer) / self.L
-
-        new_x = x + dx * delta_t
-        new_y = y + dy * delta_t
-        new_theta = angle_normalize(theta + dtheta * delta_t)
-        new_v = v + dv * delta_t
+        new_x = x + v * torch.cos(theta) * delta_t
+        new_y = y + v * torch.sin(theta) * delta_t
+        new_theta = angle_normalize(theta + v * torch.tan(steer) / self.L * delta_t)
+        new_v = v + accel * delta_t
 
         # Clamp x and y to the map boundary
         x_lim = torch.tensor(
