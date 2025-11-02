@@ -232,23 +232,6 @@ class CEM(nn.Module):
             )
             samples = mean.unsqueeze(0) + eps * std.unsqueeze(0)
             samples = torch.clamp(samples, self._u_min, self._u_max)
-            
-            # # random sampling with reparametrization trick
-            # self._action_noises = self._noise_distribution.rsample(
-            #     sample_shape=self._sample_shape
-            # )
-
-            # # noise injection with exploration
-            # threshold = int(self._num_samples * (1 - self._exploration))
-            # inherited_samples = mean_action_seq + self._action_noises[:threshold]
-            # self._perturbed_action_seqs = torch.cat(
-            #     [inherited_samples, self._action_noises[threshold:]]
-            # )
-
-            # # clamp actions
-            # self._perturbed_action_seqs = torch.clamp(
-            #     self._perturbed_action_seqs, self._u_min, self._u_max
-            # )
 
             # rollout samples in parallel
             self._state_seq_batch[:, 0, :] = state.repeat(self._num_samples, 1)
@@ -300,8 +283,6 @@ class CEM(nn.Module):
                 self._state_seq_batch[:, -1, :], zero_action, info
             )
 
-            # In the original paper, the action cost is added to consider KL div. penalty,
-            # but it is easier to tune without it
             total_cost = torch.sum(costs, dim=1) + terminal_costs # (num_samples,)
             
             min_cost, min_idx = torch.min(total_cost, dim=0)
@@ -320,15 +301,17 @@ class CEM(nn.Module):
 
             if iter == self._iters - 1:
                 last_total_cost = total_cost.clone()
-        
-        # calculate weights
-        self._weights = torch.softmax(-last_total_cost / self._lambda, dim=0)
-                        
+                          
         optimal_action_seq = mean # (horizon, dim_control)
-        
+
         # if best_actions is not None:
         #     optimal_action_seq = best_actions
         #     pass
+        
+        # calculate weights        
+        self._weights = torch.softmax(-last_total_cost / self._lambda, dim=0)
+        
+        
         
         optimal_state_seq = self._states_prediction(state, optimal_action_seq.repeat(1, 1, 1))
 

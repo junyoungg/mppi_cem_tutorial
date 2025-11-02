@@ -99,11 +99,8 @@ class MPPI(nn.Module):
         self._dim_state = dim_state
         self._dim_control = dim_control
         
-        # self._dynamics = dynamics
         self._dynamics = env.dynamics
         
-        # self._u_min = u_min.clone().detach().to(self._device, self._dtype)
-        # self._u_max = u_max.clone().detach().to(self._device, self._dtype)
         self._u_min = env.u_min.clone().detach().to(self._device, self._dtype)
         self._u_max = env.u_max.clone().detach().to(self._device, self._dtype)
         
