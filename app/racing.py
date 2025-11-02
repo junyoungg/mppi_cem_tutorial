@@ -182,10 +182,8 @@ def main(env, solver, max_steps=300, save_mode: bool = True):
     total_time = 0.0
     step_count = 0
     for i in range(max_steps):
-        start = time.time()
-        action_seq, state_seq = controller.update(state, env.racing_center_path)
-        end = time.time()
-        total_time += end - start
+        action_seq, state_seq, solve_time = controller.update(state, env.racing_center_path)
+        total_time += solve_time
         step_count += 1
         
         state, is_goal_reached = env.step(action_seq[0, :])
