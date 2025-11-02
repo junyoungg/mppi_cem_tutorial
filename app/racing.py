@@ -74,7 +74,7 @@ class racing_controller:
         if self.debug:
             print("solve time: {}".format(round(solve_time * 1000, 2)), " [ms]")
 
-        return action_seq, state_seq
+        return action_seq, state_seq, solve_time
     
     def get_top_samples(self, num_samples = 300) -> Tuple[torch.Tensor, torch.Tensor]:
         return self.solver.get_top_samples(num_samples=num_samples)
